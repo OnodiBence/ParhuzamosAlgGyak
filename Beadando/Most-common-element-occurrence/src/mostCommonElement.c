@@ -1,22 +1,22 @@
-#include "leggyakoribb.h"
+#include "mostCommonElement.h"
 
-int mostCommonElementOccurrence(int array[], int size) {
-    int maxCount = 0; // A leggyakoribb elem előfordulási száma
-    int maxElement = 0; // A leggyakoribb elem
-    for (int i = 0; i < size; ++i) {
-        int count = 1; // Az aktuális elem előfordulási száma
-        for (int j = i + 1; j < size; ++j) {
-            if (array[i] == array[j]) {
+int mostCommonElementOccurrence(Array* array) {
+    int maxCount = 0;
+    int maxElement = 0;
+    for (int i = 0; i < array->size; ++i) {
+        int count = 1;
+        for (int j = i + 1; j < array->size; ++j) {
+            if (array->data[i] == array->data[j]) {
                 ++count;
             }
         }
         if (count > maxCount) {
             maxCount = count;
-            maxElement = array[i];
+            maxElement = array->data[i];
         }
     }
 
-    printf("Leggyakoribb elem: %d, elofordulasi szama: %d\n", maxElement, maxCount);
+    printf("Most frequent element: %d, number of occurrences: %d\n", maxElement, maxCount);
     return maxCount;
 }
 
