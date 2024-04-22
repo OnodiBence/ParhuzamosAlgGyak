@@ -5,6 +5,7 @@ CFLAGS += -Wall -Wextra -Wpedantic -Wno-unused-parameter
 CFLAGS += -g
 
 LDFLAGS += -lm -lpthread
+LDFLAGS += -pthread
 
 SOURCES = $(wildcard src/*.c)
 OBJECTS = $(SOURCES:.c=.o)
