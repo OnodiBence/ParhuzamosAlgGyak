@@ -43,6 +43,8 @@ int mostCommonElementOccurrence(Array* array);
  * 
  * @param arg Array to search.
  */
-int parallelMostCommonElementOccurrence(void *arg);
+int parallelMostCommonElementOccurrence(Array* array);
+
+void* findMax(void* arg);
 
 #endif /* MOSTCOMMONELEMENT_H */

@@ -6,6 +6,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <omp.h>
 
 #define NUM_THREADS 40
 // #define ARRAY_SIZE 8435456
@@ -36,7 +37,7 @@ int main() {
     // }
     // // szekvenciális rész vége
 
-    printf("SZEKVENCIÁLIS RÉSZ VÉGE | PÁRHUZAMOS RÉSZ KEZDETE");
+    printf("SZEKVENCIALIS RESZ VEGE | PARHUZAMOS RESZ KEZDETE");
 
     n = 1;
     Task task;
@@ -45,7 +46,7 @@ int main() {
     task.start = 0;
 
     // párhuzamos rész kezdete
-    while(n <= 2) {
+    while(n <= 8) {
         gettimeofday(&start, NULL);
         // printf("create");
         createArray(&array, n*sizeof(int));
@@ -53,7 +54,7 @@ int main() {
         generateRandom(&array);
         // printf("generate vege");
         printArray(&array);
-        parallelMostCommonElementOccurrence(&task);
+        parallelMostCommonElementOccurrence(&array);
         // *(task.maxElement) = 4;
         // *(task.maxCount) = 6;
         printf("\nmaxElement: %d,  maxCount: %d\n", task.maxElement, task.maxCount);
