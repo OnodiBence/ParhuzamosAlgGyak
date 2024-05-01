@@ -47,82 +47,46 @@ int mostCommonElementOccurrence(Array* array) {
     return maxCount;
 }
 
-// int parallelMostCommonElementOccurrence(void *arg) {
-//     Task *task = (Task *)arg;
-//     task->maxCount = 0;
-//     task->maxElement = 0;
-//     int maxCount = 0;
-//     int maxElement = 0;
-
-//     for (int i = task->start; i < task->end; ++i) {
-//         int count = 1;
-//         for (int j = i + 1; j < task->array->size; ++j) {
-//             if (task->array->data[i] == task->array->data[j]) {
-//                 ++count;
-//             }
-//         }
-//         if (count > maxCount) {
-//             maxCount = count;
-//             maxElement = task->array->data[i];
-//         }
-//     }
-
-//     pthread_mutex_lock(&mutex);
-//     if (maxCount > task->maxCount) {
-//         task->maxCount = maxCount;
-//         task->maxElement = maxElement;
-//     }
-
-//     pthread_mutex_unlock(&mutex);
-
-
-//     printf("Most frequent element: %d, number of occurrences: %d\n", maxElement, maxCount);
-// }
-
-void* findMax(void* arg) {
-    ThreadData* td = (ThreadData*)arg;
-
-    for (int i = 0; i < td->size; ++i) {
-        int count = 1;
-        for (int j = i + 1; j < td->size; ++j) {
-            if (td->data[i] == td->data[j]) {
-                ++count;
-            }
-        }
-        if (count > td->maxCount) {
-            td->maxCount = count;
-            td->maxElement = td->data[i];
-        }
-    }
-
-    return NULL;
+void* processArray(void* arg) {
+    
 }
 
-int parallelMostCommonElementOccurrence(Array* array) {
-    int maxCount = 0;
-    int maxElement = 0;
+int cache(Array* array) {
+    int tmpArr[array->size];
 
-    pthread_t threads[4]; // Vegyél fel annyi szálat, ahány processzor magot tud a géped
-
-    ThreadData td[4];
-    int chunkSize = array->size / 4;
-
-    for (int i = 0; i < 4; ++i) {
-        td[i].data = array->data + i * chunkSize;
-        td[i].size = (i == 3) ? (array->size - i * chunkSize) : chunkSize;
-        td[i].maxCount = 0;
-        td[i].maxElement = 0;
-        pthread_create(&threads[i], NULL, findMax, (void*)&td[i]);
+    for (int i = 0; i < array->size; i++) {
+        for (int j = 0; i < sizeof(tmpArr); j++) {
+            if(array->data[i] == tmpArr[j]) {
+                j++;
+            } else if {
+                pthread_t thread;
+                pthread_create(&thread, NULL, processArray(array->data[i]), NULL);
+            }
+        }
+        i++;
+        
     }
+    
+}
 
-    for (int i = 0; i < 4; ++i) {
-        pthread_join(threads[i], NULL);
-        if (td[i].maxCount > maxCount) {
-            maxCount = td[i].maxCount;
-            maxElement = td[i].maxElement;
+int cachedFunction(int input) {
+    // Ellenőrizzük, hogy az input már a cache-ben van-e
+    for (int i = 0; i < CACHE_SIZE; ++i) {
+        if (cache[i] == input) {
+            printf("Found in cache! Result: %d\n", input * 2); // Példa eredmény számítás
+            return input * 2; // Visszaadjuk az eredményt a cache-ből
         }
     }
 
-    printf("Most frequent element: %d, number of occurrences: %d\n", maxElement, maxCount);
-    return maxCount;
+    // Ha az input nincs a cache-ben, számoljuk ki az eredményt
+    int result = input * 2; // Példa eredmény számítás
+
+    // Elmentjük az eredményt a cache-be
+    for (int i = CACHE_SIZE - 1; i > 0; --i) {
+        cache[i] = cache[i - 1]; // Minden elemet "előre mozgatunk" a cache-ben
+    }
+    cache[0] = input; // Az új elemet elhelyezzük a cache első helyén
+
+    printf("Result: %d\n", result);
+    return result;
 }

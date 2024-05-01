@@ -14,6 +14,24 @@ typedef struct {
     int maxElement;
 } Task;
 
+typedef struct {
+    Array* array;
+    CountResult* result;
+    int start_index;
+    int end_index;
+} ThreadData;
+
+typedef struct {
+    double value;
+    int count;
+} ElementCount;
+
+typedef struct {
+    ElementCount* counts;
+    int size;
+} CountResult;
+
+
 /**
  * Allocate memory for the generated array
  * @param array Array to allocate.
@@ -45,6 +63,6 @@ int mostCommonElementOccurrence(Array* array);
  */
 int parallelMostCommonElementOccurrence(Array* array);
 
-void* findMax(void* arg);
+int cache(Array* array);
 
 #endif /* MOSTCOMMONELEMENT_H */
