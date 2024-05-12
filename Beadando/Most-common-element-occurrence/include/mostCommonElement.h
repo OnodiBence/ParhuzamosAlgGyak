@@ -1,36 +1,26 @@
 #ifndef MOSTCOMMONELEMENT_H
 #define MOSTCOMMONELEMENT_H
 
+#define NUM_THREADS 4
+
 typedef struct {
     double *data;
     long size;
 } Array;
 
+/**
+ * Ez a struktúra a szálak által használt adatok tárolására szolgál.
+ * @param thread_id Thread identifier
+ * @param data A pointer to the data
+ * @param size The size of the array of data.
+ * @param cache A cache that can be stored for the values ​​computed by the thread.
+ */
 typedef struct {
-    int start;
-    int end;
-    Array* array;
-    int maxCount;
-    int maxElement;
-} Task;
-
-typedef struct {
-    Array* array;
-    CountResult* result;
-    int start_index;
-    int end_index;
-} ThreadData;
-
-typedef struct {
-    double value;
-    int count;
-} ElementCount;
-
-typedef struct {
-    ElementCount* counts;
+    int thread_id;
+    int* data;
     int size;
-} CountResult;
-
+    int* cache;
+} ThreadData;
 
 /**
  * Allocate memory for the generated array
@@ -63,6 +53,10 @@ int mostCommonElementOccurrence(Array* array);
  */
 int parallelMostCommonElementOccurrence(Array* array);
 
-int cache(Array* array);
+void* processArray(void* arg);
+
+void mostCommon(int* data, int size);
+
+
 
 #endif /* MOSTCOMMONELEMENT_H */

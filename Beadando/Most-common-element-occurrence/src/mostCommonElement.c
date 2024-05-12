@@ -12,11 +12,11 @@ void createArray(Array* array, long size) {
 
 void generateRandom(Array* array) {
     for (long i = 0; i < array->size; ++i) {
-        if (i<array->size/2) {
-            array->data[i] = 1000;
-        } else {
+        // if (i<array->size/2) {
+        //     array->data[i] = 1000;
+        // } else {
             array->data[i] = (double)(rand() % 1000); // Véletlenszámok 0 és 999 között
-        }
+        // }
     }
 }
 
@@ -43,50 +43,60 @@ int mostCommonElementOccurrence(Array* array) {
         }
     }
 
-    printf("Most frequent element: %d, number of occurrences: %d\n", maxElement, maxCount);
+    // printf("Most frequent element: %d, number of occurrences: %d\n", maxElement, maxCount);
     return maxCount;
 }
 
 void* processArray(void* arg) {
-    
+    ThreadData* data = (ThreadData*) arg;
+
+    // Szál saját részének feldolgozása
+    for (int i = data->thread_id; i < data->size; i += NUM_THREADS) {
+        // printf("%d -- cache: %d, data: %d, size: %d, cache: %d\n", i, data->cache, data->data, data->size, data->thread_id);
+        int element = data->data[i];
+        data->cache[element]++;
+    }
+
+    pthread_exit(NULL);
 }
 
-int cache(Array* array) {
-    int tmpArr[array->size];
-
-    for (int i = 0; i < array->size; i++) {
-        for (int j = 0; i < sizeof(tmpArr); j++) {
-            if(array->data[i] == tmpArr[j]) {
-                j++;
-            } else if {
-                pthread_t thread;
-                pthread_create(&thread, NULL, processArray(array->data[i]), NULL);
-            }
-        }
-        i++;
-        
+void mostCommon(int* data, int size) {
+    int cache_size = size; // CACHE_SIZE mérete a data[] tömb mérete
+    int* cache = (int*)calloc(cache_size, sizeof(int)); // Dinamikus cache[] tömb létrehozása és nullázása
+    if (cache == NULL) {
+        printf("Nem sikerült a memóriaterületet lefoglalni!");
+        exit(0);
     }
+
+    // Szál adatok létrehozása
+    pthread_t threads[NUM_THREADS];
+    ThreadData thread_data[NUM_THREADS];
     
-}
+    // Szálak inicializálása és indítása
+    for (int i = 0; i < NUM_THREADS; ++i) {
+        thread_data[i].thread_id = i;
+        thread_data[i].data = data;
+        thread_data[i].size = size;
+        thread_data[i].cache = cache;
+        pthread_create(&threads[i], NULL, processArray, (void*) &thread_data[i]);
+    }
 
-int cachedFunction(int input) {
-    // Ellenőrizzük, hogy az input már a cache-ben van-e
-    for (int i = 0; i < CACHE_SIZE; ++i) {
-        if (cache[i] == input) {
-            printf("Found in cache! Result: %d\n", input * 2); // Példa eredmény számítás
-            return input * 2; // Visszaadjuk az eredményt a cache-ből
+    // Szálak befejezése
+    for (int i = 0; i < NUM_THREADS; ++i) {
+        pthread_join(threads[i], NULL);
+    }
+
+    printf("CACHE SIZE: %d\n", cache_size);
+    int sum = 0;
+    // Eredmények kiírása
+    for (int i = 0; i < cache_size; ++i) {
+        if (cache[i] > 0) {
+            sum+=cache[i];
+            printf("Element %d: %d occurrences\n", i, cache[i]);
         }
     }
 
-    // Ha az input nincs a cache-ben, számoljuk ki az eredményt
-    int result = input * 2; // Példa eredmény számítás
+    printf("%d", sum);
 
-    // Elmentjük az eredményt a cache-be
-    for (int i = CACHE_SIZE - 1; i > 0; --i) {
-        cache[i] = cache[i - 1]; // Minden elemet "előre mozgatunk" a cache-ben
-    }
-    cache[0] = input; // Az új elemet elhelyezzük a cache első helyén
-
-    printf("Result: %d\n", result);
-    return result;
+    free(cache); // Dinamikusan foglalt memória felszabadítása
 }

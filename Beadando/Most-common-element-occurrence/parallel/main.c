@@ -91,7 +91,7 @@ void mostCommon(int* data, int size) {
     //     printf("[%d]. %d\n", i, threadData.cache[i]);
     // }
     
-    // printf("Element %d: %d occurrences\n", element, max);   
+    printf("Element %d: %d occurrences\n", element, max);   
 
     free(cache);
 }

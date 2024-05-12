@@ -38,7 +38,7 @@
 }
 
 .container {
-  max-width: 600px;
+  max-width: 95vw;
   margin: 0 auto;
   padding: 20px;
   border: 1px solid #ccc;
@@ -53,6 +53,7 @@ h1 {
 button {
   display: block;
   margin: 0 auto;
+  margin-bottom: 15px;
   padding: 10px 20px;
   font-size: 16px;
   border-radius: 5px;
@@ -78,4 +79,18 @@ button:disabled {
 
 .results p {
   margin-bottom: 10px;
+}
+
+.results {
+  margin-top: 20px;
+}
+
+.result-container {
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.result-container p {
+  margin: 5px 0;
 }

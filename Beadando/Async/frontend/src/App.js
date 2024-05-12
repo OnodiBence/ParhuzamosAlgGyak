@@ -3,7 +3,7 @@ import axios from "axios";
 import "./App.css";
 
 function App() {
-  const [result, setResult] = useState(null);
+  const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [waiting, setWaiting] = useState(false);
 
@@ -11,8 +11,14 @@ function App() {
     setLoading(true);
     setWaiting(true);
     try {
-      const response = await axios.post("http://localhost:5000/calculate");
-      setResult(response.data);
+      const randomNumber = Math.floor(Math.random() * 10) + 1;
+      const response = await axios.post("http://localhost:5000/calculate", {
+        numberToCheck: randomNumber,
+      });
+      setResults((prevResults) => [
+        ...prevResults,
+        { ...response.data, randomNumber },
+      ]);
       setLoading(false);
       setWaiting(false);
     } catch (error) {
@@ -20,6 +26,10 @@ function App() {
       setLoading(false);
       setWaiting(false);
     }
+  };
+
+  const generateArray = (length) => {
+    return Array.from({ length }, () => Math.floor(Math.random() * 10) + 1);
   };
 
   return (
@@ -30,21 +40,35 @@ function App() {
       </button>
       {loading && <p className="loading">Loading...</p>}
       {waiting && <p className="loading">Waiting for server response...</p>}
-      {result && (
-        <div className="results">
-          {/* <p>Generated Array: {result.testData.join(", ")}</p>   */}
-          <p>
-            Sequential Result: {result.sequentialResult.number} (Frequency:{" "}
-            {result.sequentialResult.frequency})
-          </p>
-          <p>Sequential Execution Time: {result.sequentialExecutionTime} ms</p>
-          <p>
-            Parallel Result: {result.parallelResult.number} (Frequency:{" "}
-            {result.parallelResult.frequency})
-          </p>
-          <p>Parallel Execution Time: {result.parallelExecutionTime} ms</p>
-          <p>Total Execution Time: {result.executionTime} ms</p>
-        </div>
+      {results.length > 0 && (
+        <table>
+          <thead>
+            <tr>
+              <th>Random Number</th>
+              <th>Sequential Result</th>
+              <th>Sequential Frequency</th>
+              <th>Sequential Execution Time (ms)</th>
+              <th>Parallel Result</th>
+              <th>Parallel Frequency</th>
+              <th>Parallel Execution Time (ms)</th>
+              <th>Total Execution Time (ms)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {results.map((res, index) => (
+              <tr key={index}>
+                <td>{res.randomNumber}</td>
+                <td>{res.sequentialResult.number}</td>
+                <td>{res.sequentialResult.frequency}</td>
+                <td>{res.sequentialExecutionTime}</td>
+                <td>{res.parallelResult.number}</td>
+                <td>{res.parallelResult.frequency}</td>
+                <td>{res.parallelExecutionTime}</td>
+                <td>{res.executionTime}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );

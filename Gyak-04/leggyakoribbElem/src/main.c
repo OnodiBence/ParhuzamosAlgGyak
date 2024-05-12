@@ -8,7 +8,7 @@
 int main() {
     int n = 1;
 
-    while(1) {
+    while(n<ARRAY_SIZE) {
         clock_t start = clock();
         int *array=malloc(n*sizeof(int));
         srand(time(NULL)); // Random seed inicializálása idő alapján
